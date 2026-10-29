@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synthetic User Generator — PostgreSQL Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<main>
+    <div class="mode-tabs-wrapper">
+        <div class="mode-tabs">
+            <a href="{{ url_for('index', mode='users', locale=locale, seed=seed, batch=batch, size=size, words=words) }}"
+               class="tab-btn {% if mode == 'users' %}active{% endif %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>User Identities</span>
+            </a>
+            <a href="{{ url_for('index', mode='text', locale=locale, seed=seed, batch=batch, size=size, words=words) }}"
+               class="tab-btn {% if mode == 'text' %}active{% endif %}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    <line x1="9" y1="7" x2="15" y2="7"></line>
+                    <line x1="9" y1="11" x2="15" y2="11"></line>
+                </svg>
+                <span>Markov Text Generator</span>
+            </a>
+            <a href="{{ url_for('docs') }}" class="tab-btn" target="_blank" title="Library Documentation (Stored Procedures Reference)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                <span>Documentation</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="toolbar-card">
+        <form method="get" action="/" id="generatorForm" class="toolbar-form">
+            <input type="hidden" name="mode" value="{{ mode }}">
+            <div class="form-inputs-group">
+                <div class="form-item">
+                    <label for="locale">Region / Locale</label>
+                    <select name="locale" id="locale" class="form-control">
+                        {% for loc in locales %}
+                        <option value="{{ loc.code }}" {% if loc.code == locale %}selected{% endif %}>
+                            {{ loc.display_name }} ({{ loc.code }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="seed">Seed Value</label>
+                    <div class="seed-input-wrapper">
+                        <input type="number" name="seed" id="seed" class="form-control"
+                               value="{{ seed }}" min="0" max="2147483647">
+                        <button type="button" class="btn btn-icon" id="randomizeSeedBtn" title="Randomize seed (R)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-item">
+                    <label for="batch">Batch #</label>
+                    <input type="number" name="batch" id="batch" class="form-control"
+                           value="{{ batch }}" min="0" max="10000">
+                </div>
+
+                {% if mode == 'users' %}
+                <div class="form-item">
+                    <label for="size">Per Batch</label>
+                    <select name="size" id="size" class="form-control">
+                        <option value="10" {% if size == 10 %}selected{% endif %}>10</option>
+                        <option value="20" {% if size == 20 %}selected{% endif %}>20</option>
+                        <option value="50" {% if size == 50 %}selected{% endif %}>50</option>
+                    </select>
+                </div>
+                {% else %}
+                <div class="form-item">
+                    <label for="words">Word Count</label>
+                    <select name="words" id="words" class="form-control">
+                        <option value="30" {% if words == 30 %}selected{% endif %}>30 words</option>
+                        <option value="60" {% if words == 60 %}selected{% endif %}>60 words</option>
+                        <option value="100" {% if words == 100 %}selected{% endif %}>100 words</option>
+                        <option value="150" {% if words == 150 %}selected{% endif %}>150 words</option>
+                        <option value="250" {% if words == 250 %}selected{% endif %}>250 words</option>
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="form-item">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">
+                        <span>{% if mode == 'users' %}Generate{% else %}Generate Text{% endif %}</span>
+                    </button>
+                </div>
+            </div>
+
+            {% if mode == 'users' and users %}
+            <div class="actions-group">
+                <button type="button" class="btn btn-secondary" id="copyJsonBtn" title="Copy batch as JSON">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>JSON</span>
+                </button>
+                <button type="button" class="btn btn-secondary" id="downloadCsvBtn" title="Download batch as CSV">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>CSV</span>
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if db_error %}
+    <div class="alert alert-error">
+        <strong>Database error:</strong> {{ db_error }}
+    </div>
+    {% endif %}
+
+    {% if errors %}
+    <div class="alert alert-error">
+        {% for k, msg in errors.items() %}
+        <div><strong>{{ k }}:</strong> {{ msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if mode == 'users' %}
+        {% include 'users_view.html' %}
+    {% elif mode == 'text' %}
+        {% include 'text_view.html' %}
+    {% endif %}
+</main>
+
+<div id="toast">Copied to clipboard</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>

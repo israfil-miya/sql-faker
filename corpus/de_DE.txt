@@ -1,0 +1,24 @@
+# Deutsches Textkorpus für die Markov-Kette.
+# Quelle: Eigenkomposition (gemeinfrei).
+# Verwendung: python scripts/load_markov.py --locale de_DE corpus/de_DE.txt
+
+Die Sonne ging langsam über den Bergen auf, und tauchte das Tal in goldenes Morgenlicht.
+Ein kleines Dorf, versteckt zwischen grünen Hügeln und weiten Feldern, erwachte zum neuen Tag.
+Menschen schlenderten durch die gepflasterten Gassen, und trugen Körbe mit frischem Brot und Gemüse.
+Der Marktplatz in der Mitte der Stadt war von früh morgens bis abends belebt und geschäftig.
+Kinder spielten auf dem grünen Rasen, während ihre Eltern auf Bänken saßen und Zeitung lasen.
+Ein sanfter Wind trug den Duft von Kiefernwäldern durch die geöffneten Fenster der alten Bibliothek.
+Der Bäcker stand vor dem Morgengrauen auf, um frische Brötchen und Laibe für die Kunden zu backen.
+Zwei alte Freunde trafen sich im Café, um Geschichten von ihren Reisen und Abenteuern zu teilen.
+Der Uhrturm mitten in der Stadt schlug jede Stunde, und erinnerte die Bewohner an den Lauf der Zeit.
+Bei Sonnenuntergang färbte sich der Himmel in Orange und Lila, während Vögel in ihre Nester flogen.
+Eine junge Frau saß am Brunnen, und las ein altes, in Leder gebundenes Buch über Geschichte und Kulturen.
+Die Fischer kehrten mit ihrem Fang zurück, als der Morgennebel sich langsam vom Hafen hob.
+Ein Brief kam an mit Neuigkeiten aus einem fernen Land, geschrieben in sorgfältiger Handschrift.
+Die Berge spiegelten sich im stillen See, und schufen ein perfektes Abbild der Welt über und unter Wasser.
+Der Schmied des Dorfes arbeitete an seinem Amboss, und formte heißes Eisen zu Werkzeugen und Hufeisen.
+Studierende versammelten sich im Innenhof, um über Wissenschaft, Philosophie und die Natur des Universums zu sprechen.
+Der alte Leuchtturm stand am Rand des Hafens, und führte Schiffe sicher durch die felsige Küste.
+Regen fiel sanft auf die Dächer, und erzeugte ein leises Trommeln, das die ganze Stadt gemütlich machte.
+Im Herbst färbten sich die Blätter rot und gold, bevor sie vom Wind durch die Straßen getragen wurden.
+Die Großmutter saß am Fenster und strickte, während sie leise vor sich hin summte und in die Ferne schaute.

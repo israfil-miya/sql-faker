@@ -1,0 +1,113 @@
+{% if users %}
+<div class="data-header-bar">
+    <div class="data-meta">
+        <span>Batch <strong>#{{ batch }}</strong></span>
+        <span>&bull;</span>
+        <span>Records <span class="data-meta-chip">{{ batch * size + 1 }} &ndash; {{ batch * size + users|length }}</span></span>
+        <span>&bull;</span>
+        <span>Seed: <span class="data-meta-chip">{{ seed }}</span></span>
+    </div>
+    <div class="pagination-cluster">
+        {% if batch > 0 %}
+        <a href="{{ url_for('index', mode=mode, locale=locale, seed=seed, batch=0, size=size, words=words) }}" class="btn btn-secondary" title="First batch (Batch 0)" style="padding: 0 0.6rem; font-size: 0.78rem;">
+            First
+        </a>
+        {% endif %}
+        {% if prev_url %}
+        <a href="{{ prev_url }}" id="prevBatchLink" class="btn btn-secondary" title="Previous batch (P or Left Arrow)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left preview-icon"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Prev</span>
+        </a>
+        {% else %}
+        <button class="btn btn-secondary" disabled style="opacity: 0.45; cursor: not-allowed;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left preview-icon"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span>Prev</span>
+        </button>
+        {% endif %}
+        {% if next_url %}
+        <a href="{{ next_url }}" id="nextBatchLink" class="btn btn-primary" title="Next batch (N or Right Arrow)">
+            <span>Next</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right preview-icon"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="table-container">
+    <div class="table-scroll">
+        <table class="data-grid" id="usersTable">
+            <thead>
+                <tr>
+                    <th style="width: 3.5rem; text-align: right;">#</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Coordinates</th>
+                    <th>Height</th>
+                    <th>Weight</th>
+                    <th>Eye Color</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td class="col-index">{{ batch * size + loop.index }}</td>
+                    <td>
+                        <div class="user-name-cell">
+                            <span class="user-avatar">{{ u.full_name[:1] }}</span>
+                            <span>{{ u.full_name }}</span>
+                        </div>
+                    </td>
+                    <td class="address-cell">
+                        <span class="copyable" title="Click to copy address" data-copy="{{ u.address }}">
+                            {{ u.address }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="https://www.openstreetmap.org/?mlat={{ u.latitude }}&mlon={{ u.longitude }}#map=6/{{ u.latitude }}/{{ u.longitude }}"
+                           target="_blank" rel="noopener noreferrer"
+                           class="coord-link"
+                           title="View on OpenStreetMap">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>{{ "%.4f"|format(u.latitude) }}, {{ "%.4f"|format(u.longitude) }}</span>
+                        </a>
+                    </td>
+                    <td class="metric-cell">
+                        {{ u.height_cm }}<span class="metric-unit">cm</span>
+                    </td>
+                    <td class="metric-cell">
+                        {{ u.weight_kg }}<span class="metric-unit">kg</span>
+                    </td>
+                    <td>
+                        {% set eye_clean = u.eye_color|lower|replace('ü', 'ue') %}
+                        <span class="eye-tag">
+                            <span class="eye-dot eye-{{ eye_clean }} eye-{{ u.eye_color|lower }}"></span>
+                            <span>{{ u.eye_color }}</span>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="mono-val copyable" title="Click to copy phone" data-copy="{{ u.phone }}">
+                            {{ u.phone }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="mono-val copyable" title="Click to copy email" data-copy="{{ u.email }}">
+                            {{ u.email }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% elif not errors and not db_error %}
+<div class="table-container empty-state">
+    <p>No records found. Click <strong>Generate</strong> to generate a batch of synthetic users.</p>
+</div>
+{% endif %}
+

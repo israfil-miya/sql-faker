@@ -1,0 +1,26 @@
+# Sample English corpus for Markov chain text generation.
+# Source: Public domain text (Project Gutenberg / own composition).
+# Each paragraph is one block of text. Lines starting with # are comments.
+#
+# To use: python scripts/load_markov.py --locale en_US corpus/en_US.txt
+
+The quick brown fox jumps over the lazy dog, near the old oak tree by the river.
+A small town, nestled between rolling hills and wide meadows, stretched out in the morning light.
+People walked along the cobblestone streets, carrying baskets filled with fresh bread and vegetables.
+The sun rose slowly over the distant mountains, casting long golden shadows across the valley below.
+Children played in the park, while their parents sat on wooden benches, reading newspapers and drinking coffee.
+A gentle breeze carried the scent of pine trees through the open windows of the old library.
+The market was busy with merchants, selling colorful fabrics, silver jewelry, and handmade pottery from nearby villages.
+Two old friends met at the corner café, sharing stories of their travels and the places they had seen.
+The clock tower in the center of town chimed every hour, reminding residents of the passing days.
+At dusk, the sky turned shades of orange and purple, as birds returned to their nests in the treetops.
+A young woman sat by the fountain, reading a worn leather-bound book about history and forgotten civilizations.
+The baker woke before dawn to prepare fresh loaves of bread that filled the entire street with warmth.
+Dogs barked in the distance, as a train whistle echoed through the quiet neighborhood on a Tuesday evening.
+Rain fell softly on the rooftops, creating a gentle drumming sound that made the whole town feel cozy.
+The old lighthouse stood at the edge of the harbor, guiding ships safely through the rocky coastline.
+Fishermen returned with their catch, as the morning fog lifted slowly from the surface of the harbor.
+A letter arrived with news from a faraway land, written in careful handwriting on pale yellow paper.
+Mountains reflected in the still lake created a perfect mirror image of the world above and below.
+The village blacksmith worked at his anvil, shaping hot iron into tools and horseshoes for the farmers.
+Students gathered in the courtyard, discussing ideas about science, philosophy, and the nature of the universe.
