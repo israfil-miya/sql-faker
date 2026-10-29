@@ -10,6 +10,12 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        :target {
+            scroll-margin-top: 2rem;
+        }
         .docs-container {
             max-width: 1040px;
             margin: 0 auto;
@@ -33,9 +39,9 @@
             font-size: 0.95rem;
             line-height: 1.7;
         }
-        .docs-content h1 { font-size: 1.8rem; margin: 1.5rem 0 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; }
-        .docs-content h2 { font-size: 1.35rem; margin: 1.75rem 0 0.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.3rem; }
-        .docs-content h3 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem; }
+        .docs-content h1 { font-size: 1.8rem; margin: 1.5rem 0 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; scroll-margin-top: 2rem; }
+        .docs-content h2 { font-size: 1.35rem; margin: 1.75rem 0 0.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.3rem; scroll-margin-top: 2rem; }
+        .docs-content h3 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem; scroll-margin-top: 2rem; }
         .docs-content p { margin-bottom: 1rem; }
         .docs-content ul, .docs-content ol { margin: 0 0 1rem 1.5rem; }
         .docs-content li { margin-bottom: 0.35rem; }
@@ -87,8 +93,11 @@
     </div>
 </main>
 
+<script type="text/plain" id="markdownSource">{{ content }}</script>
+
 <script>
-    const rawMarkdown = {{ content|tojson }};
+    const markdownSourceEl = document.getElementById('markdownSource');
+    const rawMarkdown = markdownSourceEl ? markdownSourceEl.textContent : '';
     const target = document.getElementById('markdownContent');
 
     function renderDocumentation(raw) {
@@ -142,7 +151,39 @@
 
         target.innerHTML = html;
 
-        // 5. Convert mermaid code blocks and run mermaid
+        // 5. Ensure all headings have IDs matching slugs if not already present
+        target.querySelectorAll('h1, h2, h3, h4').forEach(h => {
+            if (!h.id) {
+                const slug = h.textContent.trim().toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/\s+/g, '-');
+                h.id = slug;
+            }
+        });
+
+        // 6. Smooth scrolling interceptor for all in-page anchor links
+        target.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('href').substring(1);
+                const el = document.getElementById(targetId) || document.querySelector(`[name="${targetId}"]`);
+                if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    history.pushState(null, null, '#' + targetId);
+                }
+            });
+        });
+
+        // 7. Check if page loaded with initial anchor hash
+        if (window.location.hash) {
+            const initialId = window.location.hash.substring(1);
+            const initialEl = document.getElementById(initialId) || document.querySelector(`[name="${initialId}"]`);
+            if (initialEl) {
+                setTimeout(() => initialEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+            }
+        }
+
+        // 8. Convert mermaid code blocks and run mermaid
         document.querySelectorAll('pre code.language-mermaid, pre code.lang-mermaid').forEach(el => {
             const pre = el.closest('pre');
             const div = document.createElement('div');
