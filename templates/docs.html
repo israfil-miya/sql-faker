@@ -93,11 +93,18 @@
     </div>
 </main>
 
-<script type="text/plain" id="markdownSource">{{ content }}</script>
+<script type="application/json" id="markdownSource">{{ content | tojson }}</script>
 
 <script>
     const markdownSourceEl = document.getElementById('markdownSource');
-    const rawMarkdown = markdownSourceEl ? markdownSourceEl.textContent : '';
+    let rawMarkdown = '';
+    if (markdownSourceEl) {
+        try {
+            rawMarkdown = JSON.parse(markdownSourceEl.textContent);
+        } catch (e) {
+            rawMarkdown = markdownSourceEl.textContent;
+        }
+    }
     const target = document.getElementById('markdownContent');
 
     function renderDocumentation(raw) {
@@ -199,9 +206,14 @@
                     theme: 'neutral',
                     securityLevel: 'loose'
                 });
-                mermaid.run({
-                    nodes: document.querySelectorAll('.mermaid')
-                });
+                const mermaidNodes = document.querySelectorAll('.mermaid');
+                if (mermaidNodes.length > 0) {
+                    mermaid.run({
+                        nodes: mermaidNodes
+                    }).catch(err => {
+                        console.warn('Mermaid rendering note:', err);
+                    });
+                }
             } catch (err) {
                 console.warn('Mermaid rendering note:', err);
             }

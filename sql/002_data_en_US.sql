@@ -9,6 +9,8 @@ INSERT INTO locales (code, display_name, country_name) VALUES
   ('en_US', 'English (United States)', 'United States')
 ON CONFLICT DO NOTHING;
 
+DELETE FROM names WHERE locale = 'en_US';
+
 INSERT INTO names (locale, kind, idx, value) VALUES
   ('en_US', 'first_male', 1, 'James'),
   ('en_US', 'first_male', 2, 'John'),

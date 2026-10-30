@@ -144,13 +144,17 @@ def make_contiguous_pool(seeds, target_count, prefix_words=None, suffix_words=No
                 if len(res) >= target_count:
                     return res[:target_count]
 
-    counter = 1
-    while len(res) < target_count:
-        cand = f"{seeds[counter % len(seeds)]} {counter}"
-        if cand not in seen:
-            seen.add(cand)
-            res.append(cand)
-        counter += 1
+    # Fallback to realistic compound pairs without digits
+    for i in range(len(seeds)):
+        for j in range(len(seeds)):
+            if i != j:
+                cand = f"{seeds[i]}-{seeds[j]}"
+                if cand not in seen:
+                    seen.add(cand)
+                    res.append(cand)
+                if len(res) >= target_count:
+                    return res[:target_count]
+
     return res[:target_count]
 
 # Build US Pools
@@ -362,6 +366,7 @@ with open(SQL_DIR / "002_data_en_US.sql", "w", encoding="utf-8") as f:
     f.write("ON CONFLICT DO NOTHING;\n\n")
     
     # Names
+    f.write("DELETE FROM names WHERE locale = 'en_US';\n\n")
     name_rows = []
     for idx, name in enumerate(US_FIRST_MALE, start=1):
         name_rows.append(('en_US', 'first_male', idx, name))
@@ -528,7 +533,7 @@ DE_STREETS_SEEDS = [
 
 DE_FIRST_MALE = make_contiguous_pool(DE_FIRST_MALE_SEEDS, 1000, ["Hans", "Karl", "Peter", "Jan", "Lukas", "Paul"])
 DE_FIRST_FEMALE = make_contiguous_pool(DE_FIRST_FEMALE_SEEDS, 1000, ["Anna", "Maria", "Sophie", "Marie", "Lisa", "Laura"])
-DE_LAST = make_contiguous_pool(DE_LAST_SEEDS, 1200, None, ["sen.", "jun.", "von", "zu", "der"])
+DE_LAST = make_contiguous_pool(DE_LAST_SEEDS, 1200, ["von", "zu", "von der", "vom"], ["sen.", "jun."])
 DE_STREETS = make_contiguous_pool(DE_STREETS_SEEDS, 800, ["Alte", "Neue", "Obere", "Untere", "Große", "Kleine", "Hintere", "Vordere"])
 
 DE_CITIES = [
@@ -684,6 +689,7 @@ with open(SQL_DIR / "003_data_de_DE.sql", "w", encoding="utf-8") as f:
     f.write("ON CONFLICT DO NOTHING;\n\n")
     
     # Names
+    f.write("DELETE FROM names WHERE locale = 'de_DE';\n\n")
     name_rows = []
     for idx, name in enumerate(DE_FIRST_MALE, start=1):
         name_rows.append(('de_DE', 'first_male', idx, name))
